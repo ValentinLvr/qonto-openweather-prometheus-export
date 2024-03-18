@@ -48,8 +48,7 @@ type hourlyData struct {
 // Retrieve city coordinates & make a simple request with these coordinates to get current & forecasted weather data
 func GetCityData(cityName string) {
 	Lat, Lon := GetCoordinatesByCityName(cityName)
-	var cityWeatherData weatherData
-	cityWeatherData = weatherData{}
+	cityWeatherData := weatherData{}
 
 	for {
 		// ----- Get Current & forecast weather Data -----
@@ -62,24 +61,31 @@ func GetCityData(cityName string) {
 		if err != nil {
 			log.Fatalf("error while getting weatherApp API data: %s", err.Error())
 		}
-		defer resp.Body.Close()
-		body, err := io.ReadAll(resp.Body)
 
-		fmt.Println(string(body))
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatalf("error reading response body: %s", err.Error())
+		}
 
 		err = json.Unmarshal(body, &cityWeatherData)
 		if err != nil {
 			log.Fatalf("error unmarshaling response body: %s", err.Error())
 		}
 
+		err = resp.Body.Close()
+		if err != nil {
+			log.Fatalf("error closing response body: %s", err.Error())
+		}
+
 		// ----- Populate prometheus metrics -----
 		currentTemperature.With(prometheus.Labels{"city": cityName}).Set(cityWeatherData.Current.Temperature)
 		currentPrecipitation.With(prometheus.Labels{"city": cityName}).Set(cityWeatherData.Current.Rain.Precipitation)
-		// Hourly[3] to get 4-hour forecast data
+		// Hourly[3] to get 3-hour forecasted data
 		forecastTemperature.With(prometheus.Labels{"city": cityName}).Set(cityWeatherData.Hourly[3].Temperature)
 		forecastPrecipitation.With(prometheus.Labels{"city": cityName}).Set(cityWeatherData.Hourly[3].Rain.Precipitation)
 
-		// wait 50s before making another call
-		time.Sleep(50 * time.Second)
+		// wait 1mn before making another call
+		fmt.Printf("Fetch new weather data for city: %s", cityName)
+		time.Sleep(60 * time.Second)
 	}
 }
