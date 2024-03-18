@@ -72,12 +72,15 @@ func GetCityData(cityName string) {
 			log.Fatalf("error unmarshaling response body: %s", err.Error())
 		}
 
-		resp.Body.Close()
+		err = resp.Body.Close()
+		if err != nil {
+			log.Fatalf("error closing response body: %s", err.Error())
+		}
 
 		// ----- Populate prometheus metrics -----
 		currentTemperature.With(prometheus.Labels{"city": cityName}).Set(cityWeatherData.Current.Temperature)
 		currentPrecipitation.With(prometheus.Labels{"city": cityName}).Set(cityWeatherData.Current.Rain.Precipitation)
-		// Hourly[3] to get 4-hour forecast data
+		// Hourly[3] to get 3-hour forecasted data
 		forecastTemperature.With(prometheus.Labels{"city": cityName}).Set(cityWeatherData.Hourly[3].Temperature)
 		forecastPrecipitation.With(prometheus.Labels{"city": cityName}).Set(cityWeatherData.Hourly[3].Rain.Precipitation)
 
