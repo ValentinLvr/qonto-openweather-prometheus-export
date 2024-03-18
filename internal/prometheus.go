@@ -1,6 +1,8 @@
 package internal
 
 import (
+	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -43,8 +45,12 @@ var (
 )
 
 func StartServer() {
+	fmt.Println("Starting prometheus server, listening on port 2112")
 	http.Handle("/metrics", promhttp.Handler())
-	http.ListenAndServe(":2112", nil)
+	err := http.ListenAndServe(":2112", nil)
+	if err != nil {
+		log.Fatalf("error starting prometheus server: %s", err.Error())
+	}
 }
 
 func RegisterMetrics() {
