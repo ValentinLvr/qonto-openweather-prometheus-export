@@ -109,6 +109,7 @@
             "refId": "A"
           }
         ],
+        "timeFrom": "1h",
         "title": "Evolution of temperature of the 2 hottest cities polled",
         "type": "timeseries"
       },
@@ -194,6 +195,7 @@
             "refId": "A"
           }
         ],
+        "timeFrom": "1h",
         "title": "Rain precipitation in Paris",
         "type": "timeseries"
       },
@@ -276,6 +278,7 @@
             "exemplar": true,
             "expr": "forecast_temperature{city=\"paris\"} offset 3h",
             "interval": "",
+            "intervalFactor": 1,
             "legendFormat": "forecasted Temperature",
             "refId": "A"
           },
@@ -292,7 +295,6 @@
             "refId": "B"
           }
         ],
-        "timeFrom": "+3h",
         "title": "Forecasted Temperature vs Current Temperature in Paris (3h forecast)",
         "type": "timeseries"
       },
@@ -378,6 +380,7 @@
             "refId": "A"
           }
         ],
+        "timeFrom": "1h",
         "title": "Temperature over time with a threshold",
         "type": "timeseries"
       }
@@ -390,12 +393,12 @@
     },
     "time": {
       "from": "now-1h",
-      "to": "now"
+      "to": "now+3h"
     },
     "timepicker": {},
     "timezone": "",
     "title": "WeatherAPP_Scrapper",
     "uid": "XYNfVK1Sz",
-    "version": 21,
+    "version": 27,
     "weekStart": ""
   }
